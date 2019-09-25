@@ -8,6 +8,8 @@ class CustomerSchema extends Schema {
     this.create('customers', (table) => {
       table.increments()
       table.timestamps()
+      table.string('name')
+      table.text('description')
     })
   }
 

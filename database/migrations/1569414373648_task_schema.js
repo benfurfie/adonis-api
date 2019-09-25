@@ -8,6 +8,10 @@ class TaskSchema extends Schema {
     this.create('tasks', (table) => {
       table.increments()
       table.timestamps()
+      table.string('name')
+      table.text('description')
+      table.integer('project_id').unsigned()
+      table.foreign('project_id').references('projects.id').onDelete('cascade')
     })
   }
 
