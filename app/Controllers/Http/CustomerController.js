@@ -38,7 +38,7 @@ class CustomerController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, session, response, params: { id } })
+  async store ({ request, response, params: { id } })
   {
     const rules = {
       name: 'required',
