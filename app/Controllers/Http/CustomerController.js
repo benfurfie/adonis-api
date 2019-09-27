@@ -4,6 +4,9 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const { validate } = use('Validator')
+const Customer = use('App/Models/Customer')
+
 /**
  * Resourceful controller for interacting with customers
  */
@@ -17,7 +20,14 @@ class CustomerController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index ({ request, response, view })
+  {
+    const customers = await Customer.all();
+
+    response.status(200).json({
+      message: 'Here are your customers',
+      data: customers
+    })
   }
 
   /**
@@ -28,7 +38,42 @@ class CustomerController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ request, session, response, params: { id } })
+  {
+    const rules = {
+      name: 'required',
+      email: 'required|email|unique:customers,email'
+    }
+
+    const validation = await validate(request.all(), rules)
+    
+    if (validation.fails()) {
+      return validation.messages()
+    }
+    
+    const {name, email} = request.all()
+
+    const customer = await Customer.create({ name, email })
+
+    response.status(201).json({
+      message: 'Successfully created a new customer'
+    })
+
+    // Another way of doing the above
+    // const data = request.only(['name', 'email'])
+
+    // const customer = new Customer()
+
+    // customer.name = name
+    // customer.email = email
+    
+    // await customer.save()
+
+    
+
+    
+
+    
   }
 
   /**
@@ -40,7 +85,23 @@ class CustomerController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show ({ params, request, response, view, params: { id } })
+  {
+    const customer = await Customer.find(id);
+
+    if (customer) {
+      response.status(200).json({
+        message: 'Here is the customer you\'re looking for',
+        data: customer
+      })
+    } else {
+      response.status(404).json({
+        message: 'Can not find a customer with that id',
+        id
+      })
+    }
+
+      
   }
 
   /**
@@ -51,7 +112,30 @@ class CustomerController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update ({ params, request, response, params: { id } })
+  {
+    // const rules = {
+    //   name: '',
+    //   email: 'email|unique:customers,email'
+    // }
+
+    // const validation = await validate(request.all(), rules)
+    
+    // if (validation.fails()) {
+    //   return validation.messages()
+    // }
+    
+    const {name, email} = request.all()
+    const customer = await Customer.find(id)
+
+    customer.name = name
+    customer.email = email
+
+    await customer.save()
+
+    response.json({
+      message: 'Customer record updated'
+    })
   }
 
   /**
@@ -62,7 +146,14 @@ class CustomerController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params, request, response, params: { id } })
+  {
+    const customer = await Customer.find(id)
+
+
+    response.json({
+      message: 'Customer deleted'
+    })
   }
 }
 

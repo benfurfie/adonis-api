@@ -16,6 +16,12 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
+const User = use('App/Models/User')
+
 Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
+Route.get('api/v1/customer', 'CustomerController.index');
+Route.get('api/v1/customer/:id', 'CustomerController.show');
+Route.put('api/v1/customer/:id', 'CustomerController.update');
+Route.post('api/v1/customer/store', 'CustomerController.store')
