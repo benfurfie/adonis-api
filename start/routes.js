@@ -25,3 +25,6 @@ Route.get('api/v1/customer', 'CustomerController.index');
 Route.get('api/v1/customer/:id', 'CustomerController.show');
 Route.put('api/v1/customer/:id', 'CustomerController.update');
 Route.post('api/v1/customer/store', 'CustomerController.store')
+
+
+Route.post('api/v1/users', 'UserController.store')
